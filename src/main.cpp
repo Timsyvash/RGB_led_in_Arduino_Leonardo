@@ -16,9 +16,9 @@ void setup() {
   pinMode(greenPin,OUTPUT);
   pinMode(bluePin,OUTPUT);
   // Початкове вимкнення світлодіода
-  analogWrite(redPin, 255); // Для анода: 255 = вимкнено
-  analogWrite(greenPin, 255);
-  analogWrite(bluePin, 255);
+  digitalWrite(redPin, HIGH); // Для анода: 255 = вимкнено
+  digitalWrite(greenPin, HIGH);
+  digitalWrite(bluePin, HIGH);
 }
 
 void loop() {
@@ -29,28 +29,69 @@ void loop() {
   }
   myColor = Serial.readStringUntil('\n'); // Зчитуємо до нового рядка
   myColor.trim(); // Видаляємо пробіли та \r, \n
-  Serial.println("Введено: [" + myColor + "]"); // Діагностика вводу
+
+  bool isOff = (digitalRead(redPin) == HIGH && digitalRead(greenPin) == HIGH && digitalRead(bluePin) == HIGH);
 
   if(myColor=="red") {
-    analogWrite(redPin, 0);
-    analogWrite(greenPin, 255);
-    analogWrite(bluePin, 255);
+    digitalWrite(redPin, LOW);
+    digitalWrite(greenPin, HIGH);
+    digitalWrite(bluePin, HIGH);
   }
   if(myColor=="green") {
-    analogWrite(redPin, 255);
+    digitalWrite(redPin, HIGH);
+    digitalWrite(greenPin, LOW);
+    digitalWrite(bluePin, HIGH);
+  }
+  if(myColor=="blue") {
+    digitalWrite(redPin, HIGH);
+    digitalWrite(greenPin, HIGH);
+    digitalWrite(bluePin, LOW);
+  }
+  if(myColor=="off") {
+    digitalWrite(redPin, HIGH);
+    digitalWrite(greenPin, HIGH);
+    digitalWrite(bluePin, HIGH);
+  }
+
+  if(myColor=="yellow") {
+    analogWrite(redPin, 0);
     analogWrite(greenPin, 0);
     analogWrite(bluePin, 255);
   }
-  if(myColor=="blue") {
+  if(myColor=="cyan") {
     analogWrite(redPin, 255);
+    analogWrite(greenPin, 0);
+    analogWrite(bluePin, 0);
+  }
+
+  if(myColor=="magenta") {
+    analogWrite(redPin, 0);
+    analogWrite(greenPin, 255);
+    analogWrite(bluePin, 155);
+  }
+
+  if(myColor=="violet") {
+    analogWrite(redPin, 127);
     analogWrite(greenPin, 255);
     analogWrite(bluePin, 0);
   }
-  if(myColor=="off") {
-    analogWrite(redPin, 255);
-    analogWrite(greenPin, 255);
-    analogWrite(bluePin, 255);
+
+  if(myColor=="aqua") {
+    analogWrite(redPin, HIGH);
+    analogWrite(greenPin, 155);
+    analogWrite(bluePin, 175);
   }
 
+  if(myColor=="on" && isOff) {
+    analogWrite(redPin, rand() * 255);
+    analogWrite(greenPin, rand() * 255);
+    analogWrite(bluePin, rand() * 255);
+  }
+  if (myColor == "on" && !isOff) {
+    Serial.println("Світлодіод уже увімкнено! Введіть off перед on.");
+  }
+  if(myColor!="red" && myColor!="green" && myColor!="blue" && myColor!="off" && myColor!="yellow" && myColor!="cyan" && myColor!="magenta" && myColor!="violet" && myColor!="aqua" && myColor!="on") {
+    Serial.println("Невідомий колір. Спробуйте red, green, blue, yellow, cyan, magenta, violet, aqua, on або off.");
+  }
 }
  
